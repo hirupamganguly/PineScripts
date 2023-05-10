@@ -5,12 +5,231 @@
 indicator("RupamGanguly chart", max_lines_count=500, max_boxes_count=500, max_labels_count=500, max_bars_back=3000, overlay=true)
 
 //-----------------------------------------------------------------------------}
+// 2 Supertrend 
+//-----------------------------------------------------------------------------{
+
+// Input Parameters
+Periods = input.int(title="Supertrend 1 ATR Period", defval=14)
+src = input(close, title="Source")
+showsignals = input.bool(title="Show Buy/Sell Signals?", defval=true)
+Multiplier = input.float(title="ATR Multiplier", defval=2.0)
+changeATR = input.bool(title="Change ATR Calculation Method?", defval=true)
+highlighting = input.bool(title="Highlighter On/Off?", defval=false)
+Periods2 = input.int(title="Supertrend 2 ATR Period 2", defval=21)
+Multiplier2 = input.float(title="ATR Multiplier 2", defval=1.9)
+changeATR2 = input.bool(title="Change ATR 2 Calculation Method?", defval=true)
+highlighting2 = input.bool(title="Highlighter 2 On/Off?", defval=false)
+
+//Set trading window
+trading_window_start = input(8,"Trading Window Start")
+trading_window_end = input(15,"Trading Window End")
+t1 = timestamp(syminfo.timezone, year, month, dayofmonth, trading_window_start, 00, 00)
+t2 = timestamp(syminfo.timezone, year, month, dayofmonth, trading_window_end, 00, 00)
+
+// Input Parameters for DMI/ADX
+dmiLength = input.int(14, title="DMI Length", minval=1)
+adxLevel = input.int(0, title="ADX Threshold", minval=0)
+adxSmoothing = input.int(14, title="ADX Smoothing", minval=1)
+
+//Input Parameters for the Random Walk calc
+RWlength = input.int(title="Random Walk Lookback", defval=20)
+RWTrigger = input.float(title="RWI Trigger Threshold", defval=0.8)
+
+
+// Input Parameters for profit target and stop loss
+showSLTPLines = input.bool(title="Show Stop Loss & Take Profit Lines?", defval=true)
+Periods3 = input.int(title="Profit Target ATR Period", defval=14)
+Periods4 = input.int(title="Stop Loss ATR Period", defval=14)
+profitTargetMultiplier = input.float(title="Profit Target Multiplier", defval=1.4)
+stopLossMultiplier = input.float(title="Stop Loss Multiplier", defval=0.4)
+
+// Supertrend Function
+supertrend(src, factor, length, changeATR = true) =>
+    atr2 = ta.sma(ta.atr(length), length)
+    atr = changeATR ? ta.atr(length) : atr2
+    up = src - (factor * atr)
+    up1 = nz(up[1], up)
+    up := close[1] > up1 ? math.max(up, up1) : up
+    dn = src + (factor * atr)
+    dn1 = nz(dn[1], dn)
+    dn := close[1] < dn1 ? math.min(dn, dn1) : dn
+    trend = 1
+    trend := nz(trend[1], trend)
+    trend := trend == -1 and close > dn1 ? 1 : trend == 1 and close < up1 ? -1 : trend
+    [up, dn, trend]
+
+// Calculate Supertrends
+[up1, dn1, supertrend1] = supertrend(src, Multiplier, Periods, changeATR)
+[up2, dn2, supertrend2] = supertrend(src, Multiplier2, Periods2, changeATR2)
+
+// Calculate ATR for Profit target and Stop Losses
+Profit_ATR = ta.atr(Periods3)
+Stop_ATR = ta.atr(Periods4)
+
+// Calculate DMI and ADX for the trade filtering
+[diplus, diminus, adx] = ta.dmi(dmiLength, adxSmoothing)
+
+//Calculate the random walk index
+rwiHigh = (high - nz(low[RWlength])) / (ta.atr(RWlength) * math.sqrt(RWlength))
+rwiLow = (nz(high[RWlength]) - low) / (ta.atr(RWlength) * math.sqrt(RWlength))
+
+
+// Plotting Supertrend lines
+upPlot1 = plot(supertrend1 == 1 ? up1 : na, title="Up Trend 1", style=plot.style_linebr, linewidth=2, color=color.rgb(65, 232, 120, 90))
+dnPlot1 = plot(supertrend1 == -1 ? dn1 : na, title="Down Trend 1", style=plot.style_linebr, linewidth=2, color=color.rgb(232, 42, 105, 90))
+
+upPlot2 = plot(supertrend2 == 1 ? up2 : na, title="Up Trend 2", style=plot.style_linebr, linewidth=2, color=color.rgb(2, 105, 36, 90))
+dnPlot2 = plot(supertrend2 == -1 ? dn2 : na, title="Down Trend 2", style=plot.style_linebr, linewidth=2, color=color.rgb(140, 4, 49, 90))
+
+
+//Take profit and Stop loss levels
+var float long_tp_level = na
+var float long_sl_level = na
+var float short_tp_level = na
+var float short_sl_level = na
+
+//Are we in a trade?
+var bool in_long_trade = false
+var bool in_short_trade = false
+
+// At what price did we enter?
+var float long_entry_price = na
+var float short_entry_price = na
+
+//define entries
+long_entry = (ta.barssince(ta.crossover(close, dn1)) <= 1 and close > dn2 or ta.barssince(ta.crossover(close, dn2)) <= 1 and close > dn1) and not in_long_trade and not in_short_trade and (time > t1 and time < t2) and (rwiHigh >= RWTrigger) and (adxLevel == 0 or adx >= adxLevel) 
+if long_entry
+    long_tp_level := close + (Profit_ATR * profitTargetMultiplier)
+    long_sl_level := close - (Stop_ATR * stopLossMultiplier)
+    in_long_trade := true
+    long_entry_price := close
+
+else
+    long_entry := false
+
+short_entry =  (ta.barssince(ta.crossunder(close, up1)) <= 1 and close < up2 or ta.barssince(ta.crossunder(close, up2)) <= 1 and close < up1) and not in_long_trade and not in_short_trade and (time > t1 and time < t2) and (rwiLow >= RWTrigger) and (adxLevel == 0 or adx >= adxLevel) 
+if short_entry
+    short_tp_level := close - (Profit_ATR * profitTargetMultiplier)
+    short_sl_level := close + (Stop_ATR * stopLossMultiplier)
+    in_short_trade := true
+    short_entry_price := close
+else
+    short_entry := false
+
+//Define the exits
+long_tp_reached = in_long_trade and ta.crossover(close, long_tp_level)
+long_sl_reached = in_long_trade and ta.crossunder(close, long_sl_level)
+short_tp_reached = in_short_trade and ta.crossunder(close, short_tp_level)
+short_sl_reached = in_short_trade and ta.crossover(close, short_sl_level) 
+
+long_exit = long_tp_reached or long_sl_reached
+if long_exit
+    in_long_trade := false
+
+short_exit = short_tp_reached or short_sl_reached
+if short_exit
+    in_short_trade := false
+
+
+// Plotting Entry and Exit Signals
+plotshape(long_entry and showsignals ? close : na, title="Buy", text="Buy", location=location.belowbar, style=shape.labelup, size=size.tiny, color=color.green, textcolor=color.white)
+plotshape(short_entry and showsignals ? close : na, title="Sell", text="Sell", location=location.abovebar, style=shape.labeldown, size=size.tiny, color=color.red, textcolor=color.white)
+
+plotshape(long_exit and showsignals and long_tp_reached ? close : na, title="Exit", text="TP", location=location.abovebar, style=shape.circle, size=size.tiny, color=color.green, textcolor=color.white)
+plotshape(long_exit and showsignals and long_sl_reached ? close : na, title="Exit", text="SL", location=location.abovebar, style=shape.xcross, size=size.tiny, color=color.red, textcolor=color.white)
+plotshape(short_exit and showsignals and short_tp_reached ? close : na, title="Exit", text="TP", location=location.belowbar, style=shape.circle, size=size.tiny, color=color.red, textcolor=color.white)
+plotshape(short_exit and showsignals and short_sl_reached ? close : na, title="Exit", text="SL", location=location.belowbar, style=shape.xcross, size=size.tiny, color=color.green, textcolor=color.white)
+
+// Add alert conditions for long and short entries
+alertcondition(long_entry, title="Long Entry", message="Long Entry Signal: Price has crossed both Supertrends.")
+alertcondition(short_entry, title="Short Entry", message="Short Entry Signal: Price has crossed both Supertrends.")
+
+//Plotting take profit and stop loss levels
+plot(showSLTPLines and in_long_trade ? long_sl_level : na, title="Long Stop Loss", style=plot.style_linebr, linewidth=1, color=color.red)
+plot(showSLTPLines and in_long_trade ? long_tp_level : na, title="Long Take Profit", style=plot.style_linebr, linewidth=1, color=color.green)
+plot(showSLTPLines and in_short_trade ? short_sl_level : na, title="Short Stop Loss", style=plot.style_linebr, linewidth=1, color=color.red)
+plot(showSLTPLines and in_short_trade ? short_tp_level : na, title="Short Take Profit", style=plot.style_linebr, linewidth=1, color=color.green)
+
+
+
+// //-----------------------------------------------------------------------------}
+// //Supertrend HIGH LOW
+// //-----------------------------------------------------------------------------{
+// atr_length = input.int(10,"ATR Length")
+// atr_mult = input.float(3.0,"Factor",step=0.5)
+// sourceInput = input.string("Highs/Lows",title="Calculation Source",options=["Highs/Lows","Open/Close"])
+// highlighting = input.bool(true,"Enable Highlighting")
+// labels = input.bool(true,"Show Labels")
+
+// //Defining the ATR
+// hilo_atr(length) =>
+// 	highest = switch
+// 		sourceInput == "Highs/Lows" => ta.highest(high,atr_length)
+// 		sourceInput == "Open/Close" => math.max(ta.highest(close,atr_length),ta.highest(open,atr_length))
+// 	lowest = switch
+// 		sourceInput == "Highs/Lows" => ta.lowest(low,atr_length)
+// 		sourceInput == "Open/Close" => math.min(ta.lowest(close,atr_length),ta.lowest(open,atr_length))
+//     trueRange = na(highest[1])? highest-lowest : math.max(math.max(highest - lowest, math.abs(highest - close[1])), 
+// 	 math.abs(lowest - close[1]))
+//     ta.rma(trueRange, length)
+
+// //Defining the supertrend in terms of different input data
+// hilo_supertrend(factor, atrPeriod) =>
+// 	src = hl2
+// 	atr = hilo_atr(atr_length)
+// 	upperBand = src + factor * atr
+// 	lowerBand = src - factor * atr
+// 	prevLowerBand = nz(lowerBand[1])
+// 	prevUpperBand = nz(upperBand[1])
+
+// 	lowerBand := lowerBand > prevLowerBand or close[1] < prevLowerBand ? lowerBand : prevLowerBand
+// 	upperBand := upperBand < prevUpperBand or close[1] > prevUpperBand ? upperBand : prevUpperBand
+// 	int direction = na
+// 	float superTrend = na
+// 	prevSuperTrend = superTrend[1]
+// 	if na(atr[1])
+// 		direction := 1
+// 	else if prevSuperTrend == prevUpperBand
+// 		direction := close > upperBand ? -1 : 1
+// 	else
+// 		direction := close < lowerBand ? 1 : -1
+// 	superTrend := direction == -1 ? lowerBand : upperBand
+// 	[superTrend, direction]
+
+// [supertrend,dir] = hilo_supertrend(atr_mult,atr_length)
+// supertrend_up = dir == -1 ? supertrend : na
+// supertrend_dn = dir == 1 ? supertrend : na
+// supertrend_up_start = dir == -1 and dir[1] == 1 ? supertrend : na
+// supertrend_dn_start = dir == 1 and dir[1] == -1 ? supertrend : na
+
+// linecolor = dir == -1 ? color.green : color.red
+// fillcolor = dir == -1 ? color.new(color.green,88) : color.new(color.red,88)
+
+// sup = plot(supertrend_up,title="Up Supertrend",color=linecolor,style=plot.style_linebr,linewidth=2)
+// sdn = plot(supertrend_dn,title="Down Supertrend",color=linecolor,style=plot.style_linebr,linewidth=2)
+// mid = plot(hl2,color=na,title="HL2 (for Highlighting)")
+
+// plotshape(supertrend_up_start,title="Supertrend Up Start",style=shape.circle,location=location.absolute,
+//  color=color.green, size=size.tiny)
+// plotshape(supertrend_dn_start,title="Supertrend Down Start",style=shape.circle,location=location.absolute,
+//  color=color.red, size=size.tiny)
+// plotshape(labels==false?na:supertrend_up_start,title="Supertrend Buy Label",style=shape.labelup,location=location.absolute,
+//  color=color.green,textcolor=color.white,text = "Buy")
+// plotshape(labels==false?na:supertrend_dn_start,title="Supertrend Sell Label",style=shape.labeldown,location=location.absolute,
+//  color=color.red,textcolor=color.white,text = "Sell")
+
+
+// fill(sup,mid,highlighting==true ? fillcolor : na)
+// fill(sdn,mid,highlighting==true ? fillcolor : na)
+
+
+//-----------------------------------------------------------------------------}
 //VWAP
 //-----------------------------------------------------------------------------{
 hideonDWM = input(false, title="Hide VWAP on 1D or Above", group="VWAP Settings")
 var anchor = input.string(defval = "Session", title="Anchor Period",
  options=["Session", "Week", "Month", "Quarter", "Year", "Decade", "Century", "Earnings", "Dividends", "Splits"], group="VWAP Settings")
-src = input(title = "Source", defval = hlc3, group="VWAP Settings")
+srcVWAP = input(title = "Source", defval = hlc3, group="VWAP Settings")
 offset = input(0, title="Offset", group="VWAP Settings")
 
 showBand_1 = input(true, title="", group="Standard Deviation Bands Settings", inline="band_1")
@@ -41,7 +260,7 @@ isNewPeriod = switch anchor
 	=> false
 
 isEsdAnchor = anchor == "Earnings" or anchor == "Dividends" or anchor == "Splits"
-if na(src[1]) and not isEsdAnchor
+if na(srcVWAP[1]) and not isEsdAnchor
 	isNewPeriod := true
 
 float vwapValue = na
@@ -53,7 +272,7 @@ float upperBandValue3 = na
 float lowerBandValue3 = na
 
 if not (hideonDWM and timeframe.isdwm)
-    [_vwap, _stdevUpper, _] = ta.vwap(src, isNewPeriod, 1)
+    [_vwap, _stdevUpper, _] = ta.vwap(srcVWAP, isNewPeriod, 1)
 	vwapValue := _vwap
     stdevAbs = _stdevUpper - _vwap
 	upperBandValue1 := _vwap + stdevAbs * stdevMult_1
