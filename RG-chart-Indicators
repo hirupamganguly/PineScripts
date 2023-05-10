@@ -302,7 +302,7 @@ plot(vwapValue, title="VWAP", color=#808000, offset=offset)
 //-----------------------------------------------------------------------------{
 averageData = input.source(close, title="Average Data Source")
 ema20 = input.int(10, title="Fast Average Length")
-ema200 = input.int(30, title="Slow Average Length")
+ema200 = input.int(200, title="Slow Average Length")
 ema20Avg = ta.ema(averageData, ema20)
 ema200Avg = ta.ema(averageData, ema200)
 plot(ema20Avg, color=#e60400, title="Fast EMA")
