@@ -75,11 +75,11 @@ rwiLow = (nz(high[RWlength]) - low) / (ta.atr(RWlength) * math.sqrt(RWlength))
 
 
 // Plotting Supertrend lines
-upPlot1 = plot(supertrend1 == 1 ? up1 : na, title="Up Trend 1", style=plot.style_linebr, linewidth=2, color=color.rgb(65, 232, 120, 90))
-dnPlot1 = plot(supertrend1 == -1 ? dn1 : na, title="Down Trend 1", style=plot.style_linebr, linewidth=2, color=color.rgb(232, 42, 105, 90))
+upPlot1 = plot(supertrend1 == 1 ? up1 : na, title="Up Trend 1", style=plot.style_linebr, linewidth=2, color=color.rgb(65, 232, 120, 85))
+dnPlot1 = plot(supertrend1 == -1 ? dn1 : na, title="Down Trend 1", style=plot.style_linebr, linewidth=2, color=color.rgb(232, 42, 105, 85))
 
-upPlot2 = plot(supertrend2 == 1 ? up2 : na, title="Up Trend 2", style=plot.style_linebr, linewidth=2, color=color.rgb(2, 105, 36, 90))
-dnPlot2 = plot(supertrend2 == -1 ? dn2 : na, title="Down Trend 2", style=plot.style_linebr, linewidth=2, color=color.rgb(140, 4, 49, 90))
+upPlot2 = plot(supertrend2 == 1 ? up2 : na, title="Up Trend 2", style=plot.style_linebr, linewidth=2, color=color.rgb(2, 105, 36, 85))
+dnPlot2 = plot(supertrend2 == -1 ? dn2 : na, title="Down Trend 2", style=plot.style_linebr, linewidth=2, color=color.rgb(140, 4, 49, 85))
 
 
 //Take profit and Stop loss levels
@@ -132,13 +132,13 @@ if short_exit
 
 
 // Plotting Entry and Exit Signals
-plotshape(long_entry and showsignals ? close : na, title="Buy", text="Buy", location=location.belowbar, style=shape.labelup, size=size.tiny, color=color.green, textcolor=color.white)
-plotshape(short_entry and showsignals ? close : na, title="Sell", text="Sell", location=location.abovebar, style=shape.labeldown, size=size.tiny, color=color.red, textcolor=color.white)
+plotshape(long_entry and showsignals ? close : na, title="Buy", text="Buy", location=location.belowbar, style=shape.labelup, size=size.normal, color=color.green, textcolor=color.white)
+plotshape(short_entry and showsignals ? close : na, title="Sell", text="Sell", location=location.abovebar, style=shape.labeldown, size=size.normal, color=color.red, textcolor=color.white)
 
-plotshape(long_exit and showsignals and long_tp_reached ? close : na, title="Exit", text="TP", location=location.abovebar, style=shape.circle, size=size.tiny, color=color.green, textcolor=color.white)
-plotshape(long_exit and showsignals and long_sl_reached ? close : na, title="Exit", text="SL", location=location.abovebar, style=shape.xcross, size=size.tiny, color=color.red, textcolor=color.white)
-plotshape(short_exit and showsignals and short_tp_reached ? close : na, title="Exit", text="TP", location=location.belowbar, style=shape.circle, size=size.tiny, color=color.red, textcolor=color.white)
-plotshape(short_exit and showsignals and short_sl_reached ? close : na, title="Exit", text="SL", location=location.belowbar, style=shape.xcross, size=size.tiny, color=color.green, textcolor=color.white)
+plotshape(long_exit and showsignals and long_tp_reached ? close : na, title="Exit", text="TP", location=location.abovebar, style=shape.circle, size=size.normal, color=color.green, textcolor=color.white)
+plotshape(long_exit and showsignals and long_sl_reached ? close : na, title="Exit", text="SL", location=location.abovebar, style=shape.xcross, size=size.normal, color=color.red, textcolor=color.white)
+plotshape(short_exit and showsignals and short_tp_reached ? close : na, title="Exit", text="TP", location=location.belowbar, style=shape.circle, size=size.normal, color=color.red, textcolor=color.white)
+plotshape(short_exit and showsignals and short_sl_reached ? close : na, title="Exit", text="SL", location=location.belowbar, style=shape.xcross, size=size.normal, color=color.green, textcolor=color.white)
 
 // Add alert conditions for long and short entries
 alertcondition(long_entry, title="Long Entry", message="Long Entry Signal: Price has crossed both Supertrends.")
@@ -210,9 +210,9 @@ plot(showSLTPLines and in_short_trade ? short_tp_level : na, title="Short Take P
 // mid = plot(hl2,color=na,title="HL2 (for Highlighting)")
 
 // plotshape(supertrend_up_start,title="Supertrend Up Start",style=shape.circle,location=location.absolute,
-//  color=color.green, size=size.tiny)
+//  color=color.green, size=size.normal)
 // plotshape(supertrend_dn_start,title="Supertrend Down Start",style=shape.circle,location=location.absolute,
-//  color=color.red, size=size.tiny)
+//  color=color.red, size=size.normal)
 // plotshape(labels==false?na:supertrend_up_start,title="Supertrend Buy Label",style=shape.labelup,location=location.absolute,
 //  color=color.green,textcolor=color.white,text = "Buy")
 // plotshape(labels==false?na:supertrend_dn_start,title="Supertrend Sell Label",style=shape.labeldown,location=location.absolute,
@@ -329,11 +329,11 @@ showMS     = input.bool  (           true         , title = ''                  
 len        = input.int   (             5          , title = '     Length   ' +sp2    ,   group = 'Market Structures', inline = 'MS'       , minval = 3, maxval =  10   )
 
 iMSS       = input.bool  (           true         , title = '       MSS'     +sp1    ,   group = 'Market Structures', inline = 'M1'                                    )
-cMSSbl     = input.color (color.new(#00e6a1,  0), title = 'bullish'                ,   group = 'Market Structures', inline = 'M1'                                    )
+cMSSbl     = input.color (color.new(#178262,  0), title = 'bullish'                ,   group = 'Market Structures', inline = 'M1'                                    )
 cMSSbr     = input.color (color.new(#e60400,  0), title = 'bearish'                ,   group = 'Market Structures', inline = 'M1'                                    )
 
 iBOS       = input.bool  (           true         , title = '       BOS'     +sp1    ,   group = 'Market Structures', inline = 'BS'                                    )
-cBOSbl     = input.color (color.new(#00e6a1,  0), title = 'bullish'                ,   group = 'Market Structures', inline = 'BS'                                    )
+cBOSbl     = input.color (color.new(#178262,  0), title = 'bullish'                ,   group = 'Market Structures', inline = 'BS'                                    )
 cBOSbr     = input.color (color.new(#e60400,  0), title = 'bearish'                ,   group = 'Market Structures', inline = 'BS'                                    )
 
 //Displacement
@@ -358,7 +358,7 @@ bullCss    = input.color (color.new(#3e89fa,  0), title = 'Bullish OB  '      
 bullBrkCss = input.color (color.new(#4785f9, 85), title = 'Bullish Break  '        ,   group = 'Order Blocks'     , inline = 'bullcss'                               )
 
 bearCss    = input.color (color.new(#FF3131,  0), title = 'Bearish OB'             ,   group = 'Order Blocks'     , inline = 'bearcss'                               )
-bearBrkCss = input.color (color.new(#f9ff57, 85), title = 'Bearish Break'          ,   group = 'Order Blocks'     , inline = 'bearcss'                               )
+bearBrkCss = input.color (color.new(#838714, 85), title = 'Bearish Break'          ,   group = 'Order Blocks'     , inline = 'bearcss'                               )
 
 showLabels = input.bool  (          false, title = 'Show Historical Polarity Changes',   group = 'Order Blocks'                                                        )
 
@@ -368,7 +368,7 @@ a     = 10 / input.float (             4          , title = 'margin'            
 visLiq     = input.int   (             2          , title = '# Visible Liq. boxes'   ,   group = 'Liquidity'
            ,                                       minval = 1         , maxval = 50  , tooltip = 'In the same direction'                                               )
 cLIQ_B     = input.color (color.new(#fa451c,  0), title = 'Buyside Liquidity  '    ,   group = 'Liquidity'                                                           )
-cLIQ_S     = input.color (color.new(#1ce4fa,  0), title = 'Sellside Liquidity'     ,   group = 'Liquidity'                                                           )
+cLIQ_S     = input.color (color.new(#17a3b3,  0), title = 'Sellside Liquidity'     ,   group = 'Liquidity'                                                           )
 
 //FVG      
 shwFVG     = input.bool  (           true         , title = 'Show FVGs'              ,   group = 'Fair Value Gaps'                                                     )
@@ -379,7 +379,7 @@ visBxs     = input.int   (             2          , title = '# Visible FVG\'s'  
            ,                                       minval = 1         , maxval = 20  , tooltip = 'In the same direction'                                               )
 
 //FVG Style
-cFVGbl     = input.color (color.new(#00e676,  0), title = 'Bullish FVG  '          ,   group = 'Fair Value Gaps'  , inline = 'FVGbl'                                 )
+cFVGbl     = input.color (color.new(#139c59,  0), title = 'Bullish FVG  '          ,   group = 'Fair Value Gaps'  , inline = 'FVGbl'                                 )
 cFVGblBR   = input.color (color.new(#808000,  0), title = 'Break'                  ,   group = 'Fair Value Gaps'  , inline = 'FVGbl'                                 )
 cFVGbr     = input.color (color.new(#ff5252,  0), title = 'Bearish FVG '           ,   group = 'Fair Value Gaps'  , inline = 'FVGbr'                                 )
 cFVGbrBR   = input.color (color.new(#FF0000,  0), title = 'Break'                  ,   group = 'Fair Value Gaps'  , inline = 'FVGbr'                                 )
@@ -606,7 +606,7 @@ method display(ob id, css, break_css, str)=>
              , text  = str == 'bl' ? '+OB' : '-OB'
              , xloc  = xloc.bar_time
              , style = s    , color = color(na)
-             , textcolor=css, size  = size.small))
+             , textcolor=css, size  = size.normal))
              )
 
 swings(len)=>
@@ -632,7 +632,7 @@ set_lab(i, str) =>
     style = str == 'Bl' ? label.style_label_down : label.style_label_up
     txcol = str == 'Bl' ? color.lime : color.red
     label.new(math.round(math.avg(aZZ.x.get(i), n)), aZZ.y.get(i), text='BOS'
-     , style=style, color=color(na), textcolor=txcol, size=size.tiny)
+     , style=style, color=color(na), textcolor=txcol, size=size.normal)
 set_lin(i, str) =>
     color = str == 'Bl' ? color.lime : color.red
     line.new(aZZ.x.get(i), aZZ.y.get(i), n, aZZ.y.get(i), color=color, style=line.style_dotted)
@@ -687,7 +687,7 @@ draw(left, col) =>
                     b_liq_B.unshift(liq.new(
                      box.new(
                        st_B, math.avg(minP, maxP) + (atr/a), n +10, math.avg(minP, maxP) - (atr/a)
-                     , text = 'Buyside liquidity', text_size = size.tiny, text_halign = text.align_left
+                     , text = 'Buyside liquidity $$$', text_size = size.normal, text_halign = text.align_left
                      , text_valign = text.align_bottom, text_color = color.new(cLIQ_B, 25)
                      , bgcolor=color(na), border_color=color(na)
                       )
@@ -743,7 +743,7 @@ draw(left, col) =>
                     b_liq_S.unshift(liq.new(
                       box.new(
                        st_B, math.avg(minP, maxP) + (atr/a), n +10, math.avg(minP, maxP) - (atr/a)
-                     , text = 'Sellside liquidity', text_size = size.tiny, text_halign = text.align_left
+                     , text = 'Sellside liquidity $$$', text_size = size.normal, text_halign = text.align_left
                      , text_valign = text.align_bottom, text_color = color.new(cLIQ_S, 25)
                      , bgcolor=color(na), border_color=color(na)
                       )
@@ -777,8 +777,8 @@ draw(left, col) =>
                 MSS.l_mssBl.unshift(line.new (
                   aZZ.x.get(iH), aZZ.y.get(iH), n, aZZ.y.get(iH), color=cMSSbl))
                 MSS.lbMssBl.unshift(label.new(
-                  math.round(math.avg(aZZ.x.get(iH), n)), aZZ.y.get(iH), text ='MSS'
-                  , style=label.style_label_down, size=size.tiny, color=color(na), textcolor=cMSSbl))
+                  math.round(math.avg(aZZ.x.get(iH), n)), aZZ.y.get(iH), text ='CHOCK'
+                  , style=label.style_label_down, size=size.normal, color=color(na), textcolor=cMSSbl))
             // MSS Bearish
             close < aZZ.y.get(iL) and aZZ.d.get(iL) == -1 and MSS.dir > -1 =>
                 MSS.dir := -1 
@@ -791,8 +791,8 @@ draw(left, col) =>
                 MSS.l_mssBr.unshift(line.new (
                   aZZ.x.get(iL), aZZ.y.get(iL), n, aZZ.y.get(iL), color=cMSSbr))
                 MSS.lbMssBr.unshift(label.new(
-                  math.round(math.avg(aZZ.x.get(iL), n)), aZZ.y.get(iL), text ='MSS'
-                  , style=label.style_label_up  , size=size.tiny, color=color(na), textcolor=cMSSbr))
+                  math.round(math.avg(aZZ.x.get(iL), n)), aZZ.y.get(iL), text ='CHOCK'
+                  , style=label.style_label_up  , size=size.normal, color=color(na), textcolor=cMSSbr))
             // BOS Bullish
             MSS.dir ==  1 and close > aZZ.y.get(iH) and iBOS =>
                 if MSS.l_bosBl.size() > 0
@@ -910,7 +910,7 @@ if imbalanceUP and per and shwFVG
          , bgcolor     = i_BPR ? color(na) : color.new(cFVGbl, 90)
          , border_color= i_BPR ? color(na) : color.new(cFVGbl, 65)
          , text_color  = i_BPR ? color(na) : color.new(cFVGbl, 65)
-         , text_size=size.small
+         , text_size=size.normal
          , text=i_FVG
          )
          , true)
@@ -930,7 +930,7 @@ if imbalanceDN and per and shwFVG
          , bgcolor     = i_BPR ? color(na) : color.new(cFVGbr, 90)
          , border_color= i_BPR ? color(na) : color.new(cFVGbr, 65)
          , text_color  = i_BPR ? color(na) : color.new(cFVGbr, 65)
-         , text_size=size.small
+         , text_size=size.normal
          , text=i_FVG
          )
          , true)
@@ -960,7 +960,7 @@ if i_BPR and bFVG_UP.size() > 0 and bFVG_DN.size() > 0
               , bgcolor     = i_BPR ? color.new(cFVGbl, 90) : color(na)
               , border_color= i_BPR ? color.new(cFVGbl, 65) : color(na)
               , text_color  = i_BPR ? color.new(cFVGbl, 65) : color(na)
-              , text_size=size.small
+              , text_size=size.normal
               , text= 'BPR'
               ) 
               , true
@@ -981,7 +981,7 @@ if i_BPR and bFVG_UP.size() > 0 and bFVG_DN.size() > 0
               , bgcolor     = i_BPR ? color.new(cFVGbr, 90) : color(na)
               , border_color= i_BPR ? color.new(cFVGbr, 65) : color(na)
               , text_color  = i_BPR ? color.new(cFVGbr, 65) : color(na)
-              , text_size=size.small
+              , text_size=size.normal
               , text= 'BPR'
               ) 
               , true
@@ -1185,7 +1185,7 @@ if showOB and per
         label.new(top.x, top.y, '▼', color = na
           , textcolor = bearCss.notransp()
           , style = label.style_label_down
-          , size = size.tiny)
+          , size = size.normal)
 
 if showOB and per
     if close < btm.y and not btm.crossed 
@@ -1220,7 +1220,7 @@ if showOB and per
         label.new(btm.x, btm.y, '▲', color = na
           , textcolor = bullCss.notransp()
           , style = label.style_label_up
-          , size = size.tiny)
+          , size = size.normal)
 
 //Set Order Blocks
 if barstate.islast and showOB 
