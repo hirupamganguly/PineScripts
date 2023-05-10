@@ -307,8 +307,9 @@ ema20Avg = ta.ema(averageData, ema20)
 ema200Avg = ta.ema(averageData, ema200)
 plot(ema20Avg, color=#e60400, title="Fast EMA")
 plot(ema200Avg, color=#3e89fa, linewidth=2, title="Slow EMA")
+
 //-----------------------------------------------------------------------------}
-//Strings
+//ICT
 //-----------------------------------------------------------------------------{
 o          = 'Options'
 sp1        = '       '
@@ -319,9 +320,8 @@ lo_        = 'London Open'
 lc_        = 'London Close'
 as_        = 'Asian'      
 
-//-----------------------------------------------------------------------------}
 //Settings
-//-----------------------------------------------------------------------------{
+
 i_mode     = input.string(         'Present'      , title = 'Mode'                   , options =['Present', 'Historical']                                              )
 
 //Market Structure Shift
@@ -414,9 +414,7 @@ ldncCss    = input.color (color.new(#2157f3, 93), title = ''       , inline = 'l
 showAsia   = input.bool  (           true         , title = as_ + sp2, inline = 'as' ,   group = 'Killzones'                                                           ) and showKZ
 asiaCss    = input.color (color.new(#e91e63, 93), title = ''       , inline = 'as' ,   group = 'Killzones'                                                           )
 
-//-----------------------------------------------------------------------------}
 //General Calculations
-//-----------------------------------------------------------------------------{
 n          =                      bar_index
 hi         =                      high  
 lo         =                      low   
@@ -441,9 +439,7 @@ g          = color.g(chart.bg_color)
 b          = color.b(chart.bg_color)
 isDark     = r < 80 and g < 80 and b < 80
 
-//-----------------------------------------------------------------------------}
 //User Defined Types
-//-----------------------------------------------------------------------------{
 type ZZ 
     int   [] d
     int   [] x 
@@ -515,9 +511,7 @@ var mss MSS = mss.new(
  , array.new < label >()
  )
 
-//-----------------------------------------------------------------------------}
 //Variables
-//-----------------------------------------------------------------------------{
 maxVimb = 2
 
 var float friCp = na, var int friCi = na // Friday Close price/index
@@ -563,9 +557,7 @@ var line _0786 = line.new(na, na, na, na, color=color.new(color.orange, 25), sty
 var line _one_ = line.new(na, na, na, na, color=color.new(color.silver,  5), style=line.style_solid , xloc= xloc, extend=ext)
 var line _1618 = line.new(na, na, na, na, color=color.new(color.yellow, 25), style=line.style_solid , xloc= xloc, extend=ext)
  
-//-----------------------------------------------------------------------------}
 //Functions/methods
-//-----------------------------------------------------------------------------{
 method in_out(ZZ aZZ, int d, int x1, float y1, int x2, float y2, color col, bool b) =>
     aZZ.d.unshift(d), aZZ.x.unshift(x2), aZZ.y.unshift(y2), aZZ.b.unshift(b), aZZ.d.pop(), aZZ.x.pop(), aZZ.y.pop(), aZZ.b.pop()
 
@@ -825,9 +817,7 @@ draw(left, col) =>
 
 
 
-//-----------------------------------------------------------------------------}
 //Calculations
-//-----------------------------------------------------------------------------{
 draw(len, color.yellow)             
 
 if MSS.l_bosBl.size() > 200
@@ -1232,9 +1222,7 @@ if showOB and per
           , style = label.style_label_up
           , size = size.tiny)
 
-//-----------------------------------------------------------------------------}
 //Set Order Blocks
-//-----------------------------------------------------------------------------{
 if barstate.islast and showOB 
     if a_bx_ln_lb.size() > 0
         for i = a_bx_ln_lb.size() -1 to 0 
@@ -1257,9 +1245,7 @@ if barstate.islast and showOB
                 get_ob = bearish_ob.get(i)
                 get_ob.display(bearCss, bearBrkCss, 'br')
 
-//-----------------------------------------------------------------------------}
 //Fibonacci
-//-----------------------------------------------------------------------------{
 if barstate.islast
     x1 = 0, y1 = 0., x2 = 0, y2 = 0., box up = na, box dn = na
     switch iFib
@@ -1421,9 +1407,7 @@ if barstate.islast
         _one_.setLine(rt, _1        , rt + plus, _1        )
         _1618.setLine(rt, _0 + m1618, rt + plus, _0 + m1618)
 
-//-----------------------------------------------------------------------------}
 //Displacement
-//-----------------------------------------------------------------------------{
 plotshape(sDispl ? per       ? 
      L_bodyUP    ? low  : na : na : na
      , title     = 'Displacement UP'
@@ -1437,14 +1421,11 @@ plotshape(sDispl ? per       ?
      , color     = color.red 
      , location  = location.abovebar)
 
-//-----------------------------------------------------------------------------}
 //background - Killzones
-//-----------------------------------------------------------------------------{
 bgcolor  (per    ? ny        ? nyCss   : na : na, editable = false)
 bgcolor  (per    ? ldn_open  ? ldnoCss : na : na, editable = false)
 bgcolor  (per    ? ldn_close ? ldncCss : na : na, editable = false)
 bgcolor  (per    ? asian     ? asiaCss : na : na, editable = false)
 
-//-----------------------------------------------------------------------------}
 
 
