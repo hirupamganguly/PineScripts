@@ -298,3 +298,31 @@ if rsiShowTable
 //--- Alerts -------------------------------------------
 //------------------------------------------------------
 
+//ALERTS 
+fireAlert(ticker,price, freq = alert.freq_once_per_bar)=>
+  
+    [hi, lo, cl, op] = request.security(ticker,  timeframe.period, [high, low, close, open])
+    if hi >= price
+        msg="ALERT FOR -> ",ticker
+        alert(msg, freq)
+
+string  Sec1 = input.string("NSE:HDFCBANK", "Securities", inline = "11", options = ["NSE:HDFCBANK", "NSE:ICICIBANK", "NSE:SBIN","NSE:AXISBANK","NSE:KOTAKBANK","NSE:RELIANCE","NSE:BANKNIFTY","NSE:NIFTY"])
+float  Price1 = input.float(1007, "Price", inline = "11")
+string  Sec2 = input.string("NSE:HDFCBANK", "Securities", inline = "11", options = ["NSE:HDFCBANK", "NSE:ICICIBANK", "NSE:SBIN","NSE:AXISBANK","NSE:KOTAKBANK","NSE:RELIANCE","NSE:BANKNIFTY","NSE:NIFTY"])
+float  Price2 = input.float(1007, "Price", inline = "11")
+string  Sec3 = input.string("NSE:HDFCBANK", "Securities", inline = "11", options = ["NSE:HDFCBANK", "NSE:ICICIBANK", "NSE:SBIN","NSE:AXISBANK","NSE:KOTAKBANK","NSE:RELIANCE","NSE:BANKNIFTY","NSE:NIFTY"])
+float  Price3 = input.float(1007, "Price", inline = "11")
+string  Sec4 = input.string("NSE:HDFCBANK", "Securities", inline = "11", options = ["NSE:HDFCBANK", "NSE:ICICIBANK", "NSE:SBIN","NSE:AXISBANK","NSE:KOTAKBANK","NSE:RELIANCE","NSE:BANKNIFTY","NSE:NIFTY"])
+float  Price4 = input.float(1007, "Price", inline = "11")
+string  Sec5 = input.string("NSE:HDFCBANK", "Securities", inline = "11", options = ["NSE:HDFCBANK", "NSE:ICICIBANK", "NSE:SBIN","NSE:AXISBANK","NSE:KOTAKBANK","NSE:RELIANCE","NSE:BANKNIFTY","NSE:NIFTY","BTCUSDT","AVAXUSDT","MATICUSDT"])
+float  Price5 = input.float(1007, "Price", inline = "11")
+
+
+fireAlert(Sec1,Price1)
+fireAlert(Sec2,Price2)
+fireAlert(Sec3,Price3)
+fireAlert(Sec4,Price4)
+fireAlert(Sec5,Price5)
+
+
+    
