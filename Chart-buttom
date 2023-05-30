@@ -29,13 +29,6 @@ rsiHighlightShowInput = input(true, title='Show Oversold/Overbought Highlight Li
 DivergenceShowInput   = input(true, title='Show RSI Divergence Labels', group='Show/Hide Settings')
 
 
-//---------------------------------------------------------------------------------------------------------------------------------------------------------------------
-//--- Table Settings ----------------------------------------------------------------------------------------------------------------------------------------------
-//---------------------------------------------------------------------------------------------------------------------------------------------------------------------
-rsiShowTable      = input(true, title='Show RSI Table Information box', group="DeFib Table Settings")
-rsiTablePosition  = input.string(title='Location', defval='top_right', options=['top_left', 'top_center','top_right','middle_left','middle_cente','middle_right','bottom_left','bottom_cente','bottom_right'], group="DeFib Table Settings", inline='1')
-rsiTextSize       = input.string(title=' Size', defval='small', options=['auto','tiny','small','normal','large','huge'], group="DeFib Table Settings", inline='1')
-
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //--- RSI Input Settings ----------------------------------------------------------------------------------------------------------------------------------------------
@@ -74,12 +67,7 @@ plotHiddenBearInput = input(title="Plot Hidden Bearish", defval=true, group='RSI
 //--- RSI Calculation -------------------------------------------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 rsi         = ta.rsi(rsiSourceInput, rsiLengthInput)
-rsiprevious = rsi[1]
-rsi1m = request.security(syminfo.tickerid, "1", ta.rsi(rsiSourceInput, rsiLengthInput))
-rsi15m = request.security(syminfo.tickerid, "15", ta.rsi(rsiSourceInput, rsiLengthInput))
-rsi1h  = request.security(syminfo.tickerid, "60", ta.rsi(rsiSourceInput, rsiLengthInput))
-rsi4h  = request.security(syminfo.tickerid, "240", ta.rsi(rsiSourceInput, rsiLengthInput))
-rsi1d  = request.security(syminfo.tickerid, "1440", ta.rsi(rsiSourceInput, rsiLengthInput))
+
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //--- MA Calculation -------------------------------------------------------------------------------------------------------------------------------------------------
@@ -267,62 +255,6 @@ plotshape(
      color=bearColor,
      textcolor=textColor
      )
-
-//---------------------------------------------------------------------------------------------------------------------------------------------------------------------
-//--- RSI Info Table Setting ------------------------------------------------------------------------------------------------------------------------------------------
-//---------------------------------------------------------------------------------------------------------------------------------------------------------------------
-width_c0 = 0
-width_c1 = 4
-
-if rsiShowTable
-    var rsi_Table = table.new(position=rsiTablePosition, columns=2, rows=6, bgcolor=color.rgb(18,22,33,50), frame_color=color.black, frame_width=1, border_color=color.black, border_width=1)
-
-    table.cell(table_id=rsi_Table, column=0, row=0, text=" RSI Current:", width=width_c0, text_color=color.orange, text_size=rsiTextSize, text_halign='right')
-    table.cell(table_id=rsi_Table, column=0, row=1, text=" RSI 1m:",width=width_c0, text_color=textColor, text_size=rsiTextSize, text_halign='right')
-    table.cell(table_id=rsi_Table, column=0, row=2, text=" RSI 15m:",width=width_c0, text_color=textColor, text_size=rsiTextSize, text_halign='right')
-    table.cell(table_id=rsi_Table, column=0, row=3, text=" RSI 1h:",width=width_c0, text_color=textColor, text_size=rsiTextSize, text_halign='right')
-    table.cell(table_id=rsi_Table, column=0, row=4, text=" RSI 4h:",width=width_c0, text_color=textColor, text_size=rsiTextSize, text_halign='right')
-    table.cell(table_id=rsi_Table, column=0, row=5, text=" RSI 1d:",width=width_c0, text_color=textColor, text_size=rsiTextSize, text_halign='right')
-   
-
-    table.cell(table_id=rsi_Table, column=1, row=0, text=str.format("{0,number,#.##} ", rsi), width=width_c1, text_color=textColor, bgcolor=(rsi < 50 ? bearishColor:bullishColor), text_size=rsiTextSize, text_halign='left')
-    table.cell(table_id=rsi_Table, column=1, row=1, text=str.format("{0,number,#.##} ", rsi1m), width=width_c1, text_color=textColor, bgcolor=(rsi1d < 50 ? bearishColor:bullishColor), text_size=rsiTextSize, text_halign='left')  
-    table.cell(table_id=rsi_Table, column=1, row=2, text=str.format("{0,number,#.##} ", rsi15m), width=width_c1, text_color=textColor, bgcolor=(rsi15m < 50 ? bearishColor:bullishColor), text_size=rsiTextSize, text_halign='left')
-    table.cell(table_id=rsi_Table, column=1, row=3, text=str.format("{0,number,#.##} ", rsi1h), width=width_c1, text_color=textColor, bgcolor=(rsi1h < 50 ? bearishColor:bullishColor), text_size=rsiTextSize, text_halign='left')
-    table.cell(table_id=rsi_Table, column=1, row=4, text=str.format("{0,number,#.##} ", rsi4h), width=width_c1, text_color=textColor, bgcolor=(rsi4h < 50 ? bearishColor:bullishColor), text_size=rsiTextSize, text_halign='left')
-    table.cell(table_id=rsi_Table, column=1, row=5, text=str.format("{0,number,#.##} ", rsi1d), width=width_c1, text_color=textColor, bgcolor=(rsi1d < 50 ? bearishColor:bullishColor), text_size=rsiTextSize, text_halign='left')
-   
-
-
-//------------------------------------------------------
-//--- Alerts -------------------------------------------
-//------------------------------------------------------
-
-//ALERTS 
-fireAlert(ticker,price, freq = alert.freq_once_per_bar)=>
-  
-    [hi, lo, cl, op] = request.security(ticker,  timeframe.period, [high, low, close, open])
-    if hi >= price
-        msg="ALERT FOR -> ",ticker
-        alert(msg, freq)
-
-string  Sec1 = input.string("NSE:HDFCBANK", "Securities", inline = "11", options = ["NSE:HDFCBANK", "NSE:ICICIBANK", "NSE:SBIN","NSE:AXISBANK","NSE:KOTAKBANK","NSE:RELIANCE","NSE:BANKNIFTY","NSE:NIFTY"])
-float  Price1 = input.float(1007, "Price", inline = "11")
-string  Sec2 = input.string("NSE:HDFCBANK", "Securities", inline = "11", options = ["NSE:HDFCBANK", "NSE:ICICIBANK", "NSE:SBIN","NSE:AXISBANK","NSE:KOTAKBANK","NSE:RELIANCE","NSE:BANKNIFTY","NSE:NIFTY"])
-float  Price2 = input.float(1007, "Price", inline = "11")
-string  Sec3 = input.string("NSE:HDFCBANK", "Securities", inline = "11", options = ["NSE:HDFCBANK", "NSE:ICICIBANK", "NSE:SBIN","NSE:AXISBANK","NSE:KOTAKBANK","NSE:RELIANCE","NSE:BANKNIFTY","NSE:NIFTY"])
-float  Price3 = input.float(1007, "Price", inline = "11")
-string  Sec4 = input.string("NSE:HDFCBANK", "Securities", inline = "11", options = ["NSE:HDFCBANK", "NSE:ICICIBANK", "NSE:SBIN","NSE:AXISBANK","NSE:KOTAKBANK","NSE:RELIANCE","NSE:BANKNIFTY","NSE:NIFTY"])
-float  Price4 = input.float(1007, "Price", inline = "11")
-string  Sec5 = input.string("NSE:HDFCBANK", "Securities", inline = "11", options = ["NSE:HDFCBANK", "NSE:ICICIBANK", "NSE:SBIN","NSE:AXISBANK","NSE:KOTAKBANK","NSE:RELIANCE","NSE:BANKNIFTY","NSE:NIFTY","BTCUSDT","AVAXUSDT","MATICUSDT"])
-float  Price5 = input.float(1007, "Price", inline = "11")
-
-
-fireAlert(Sec1,Price1)
-fireAlert(Sec2,Price2)
-fireAlert(Sec3,Price3)
-fireAlert(Sec4,Price4)
-fireAlert(Sec5,Price5)
 
 
     
